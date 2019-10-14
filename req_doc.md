@@ -123,37 +123,24 @@ There are multiple type of user, each having their own functionality .For exampl
 - Signup/Login for User
 
 - User can add a problem
-  * input: all attributes of question,user-id
-  * output: adds the question
-
+  
 - User can delete a problem created by himself
-  * input: user-id,problem-id
-  * output: deletes problem if possible.
 
 - User can add a contest
-  * input: user-id,all attributes of a contest
-  * output: adds the contest
 
 - User can delete a contest created by himself
 
 - User review
 
 - Rating may increase or decrease based upon performance
-  * input: solved question-id,user-id
-  * output: updates the rating of user corresponding to question solved
 
 - Contest will have different divisions
 
-- Problems will have several testcases for corresponding 
-subtasks for partial marking
+- Problems will have several testcases for corresponding subtasks for partial marking
 
 - User can update his user information like name, dob, institute
-  * input: modified detail of user
-  * output: Updates the personal detail of the user
 
 - user can submit code for evaluation
-  * input: question-id,user-id,code
-  * output: 
 
 - User can see their progress over time
 
@@ -161,13 +148,7 @@ subtasks for partial marking
 ### Additional functionalities for admin
 
 - Admin user can delete a problem or a contest
-  * input: contest-id
-  * output: deletes the particular contest
 
 - Login for admin
-  * input: credentials of admin
-  * output: give admin access
 
 - Admin rates the problem/contest added by the user
-  * input: problem-id
-  * output: update score allocated for that problem
