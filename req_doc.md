@@ -46,9 +46,10 @@ There are multiple type of user, each having their own functionality .For exampl
   3. Date of Birth
   4. Primary Email ID
   5. Secondary Email IDs - multivalued attribute
-  6. Institute
-  7. Join Date(datetime)
-  8. Age - Derived Attribute
+  6. Rating
+  7. Institute
+  8. Join Date(datetime)
+  9. Age - Derived Attribute
 
 - Question
   1. Question ID - Primary Key
@@ -114,13 +115,11 @@ There are multiple type of user, each having their own functionality .For exampl
 
 ## Functional Requirements
 
-### Functionalities provided to a guest
-- can view other users profile.
-- see questions title, text, allowed language and leaderboard.
+- Signup/Login for User and Admin
 
-### Additional functionalities to a user
+- Guests can view other users profile.
 
-- Signup/Login for User
+- Guests, users and admin can see questions title, text, allowed language and leaderboard.
 
 - User can add a problem
   
@@ -132,7 +131,7 @@ There are multiple type of user, each having their own functionality .For exampl
 
 - User review
 
-- Rating may increase or decrease based upon performance
+- Rating of a user may increase or decrease based upon performance
 
 - Contest will have different divisions
 
@@ -140,15 +139,10 @@ There are multiple type of user, each having their own functionality .For exampl
 
 - User can update his user information like name, dob, institute
 
-- user can submit code for evaluation
+- User can submit code for evaluation
 
 - User can see their progress over time
 
-
-### Additional functionalities for admin
-
 - Admin user can delete a problem or a contest
-
-- Login for admin
 
 - Admin rates the problem/contest added by the user
