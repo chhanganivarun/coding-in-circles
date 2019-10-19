@@ -16,7 +16,7 @@ The following is the ER Diagram for the exact given requirements. This contains 
 
 - Evaluation change must be a derived attribute as it is calculated by the engine and not given as an input explicitly.
 
-- Relationship play is <u>NOT</u> a tertiary relationship.
+- Relationship play is <u>NOT</u> a quaternary relationship.
 
 - Rating should be of all players and thus attribute of Player entity and not of all the subclasses individually.
 
