@@ -58,8 +58,8 @@ There are multiple type of user, each having their own functionality .For exampl
   2. Title
   3. Question text
   4. Score
-  5. Allowed Languages
-  6. Tags
+  5. Allowed Languages - Multivalued
+  6. Tags - Multivalued
 
 - Contest
   1. Contest ID - Primary Key
