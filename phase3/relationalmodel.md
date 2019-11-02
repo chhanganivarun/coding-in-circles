@@ -29,3 +29,30 @@ Modified ER Diagram:
 The Relational Model derived from the ER Diagram is already in 3NF.
 ![](rm.png)
 
+### Example Tuples for each relations:
+
+![](relation-images/1.png)
+
+
+
+![](relation-images/2.png)
+
+![](relation-images/3.png)
+
+
+![](relation-images/4.png)
+
+![](relation-images/5.png)
+
+![](relation-images/6.png)
+
+![](relation-images/7.png)
+
+![](relation-images/8.png)
+
+![](relation-images/9.png)
+
+![](relation-images/10.png)
+
+![](relation-images/11.png)
+
