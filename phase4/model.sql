@@ -1,3 +1,5 @@
+CREATE DATABASE OJ
+
 CREATE TABLE `user` (
   `userid` int PRIMARY KEY AUTO_INCREMENT,
   `firstname` varchar(255),
