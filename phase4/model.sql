@@ -25,11 +25,12 @@ CREATE TABLE `question` (
 );
 
 CREATE TABLE `testcases` (
-  `testid` int PRIMARY KEY,
+  `testid` int,
   `input` varchar(255),
   `output` varchar(255),
   `subtaskid` int,
-  `questionid` int
+  `questionid` int,
+  PRIMARY KEY ('testid','questionid')
 );
 
 CREATE TABLE `languages` (
