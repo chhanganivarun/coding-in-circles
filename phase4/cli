@@ -1,0 +1,41 @@
+user login
+admin login
+user signup
+
+AFTER USER LOGIN:-
+	add question
+	add contest
+
+	view question(by name ,id .Shows question attributes) 
+	view contest
+
+	play question(takes directly questionid and answer)
+		- in place of code,we can take direct answer for corresponding test cases and rate accordingly.
+
+	play contest(takes directly contestid and answer)
+
+	remove question created by you
+	remove contest created by you
+
+	user STATS(basis of name,userid)
+	 - question played
+	 - question made
+	 - contest made
+	 - contest played
+	 - rating
+
+	VIEW
+	question (basis of name,id)
+	contest  (basis of name,id)
+
+	upadte info
+	-NAME
+	-DOB
+	-INSTI
+	-Etc
+
+AFTER ADMIN login:-
+	USER+
+	delete question 
+	delete problem
+	rate promblem/contest 
