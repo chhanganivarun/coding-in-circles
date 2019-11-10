@@ -2,6 +2,18 @@ user login
 admin login
 user signup
 
+FOR GUEST MODE:-
+	user STATS(basis of name,userid)
+	 - question played
+	 - question made
+	 - contest made
+	 - contest played
+	 - rating
+
+	VIEW
+	question (basis of name,id)
+	contest  (basis of name,id)
+
 AFTER USER LOGIN:-
 	add question
 	add contest
