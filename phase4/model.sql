@@ -1,4 +1,5 @@
-CREATE DATABASE OJ
+CREATE DATABASE IF NOT Exists OJ;
+use OJ
 
 CREATE TABLE `user` (
   `userid` int PRIMARY KEY AUTO_INCREMENT,
@@ -6,9 +7,9 @@ CREATE TABLE `user` (
   `middlename` varchar(255),
   `lastname` varchar(255),
   `rating` int,
-  `joindate` timestamp,
+  `joindate` datetime,
   `institute` varchar(255),
-  `DOB` timestamp,
+  `DOB` datetime,
   `passwordhash` varchar(255),
   `passwordsalt` varchar(255),
   `primaryemail` varchar(255),
@@ -32,7 +33,7 @@ CREATE TABLE `testcases` (
   `output` varchar(255),
   `subtaskid` int,
   `questionid` int,
-  PRIMARY KEY ('testid','questionid')
+  PRIMARY KEY (`testid`,`questionid`)
 );
 
 CREATE TABLE `languages` (
@@ -48,7 +49,7 @@ CREATE TABLE `tags` (
 );
 
 CREATE TABLE `submission` (
-  `subID` int PRIMARY KEY,
+  `subid` int PRIMARY KEY,
   `code` varchar(255),
   `submissiontime` int
 );
@@ -70,10 +71,10 @@ CREATE TABLE `contest` (
   `contestid` int PRIMARY KEY,
   `contestname` varchar(255),
   `minScoreAllowed` int,
-  `CreationDate` timestamp,
+  `CreationDate` datetime,
   `MaximumScoreAllowed` int,
-  `StartTime` timestamp,
-  `EndTime` timestamp,
+  `StartTime` datetime,
+  `EndTime` datetime,
   `userid` int
 );
 
@@ -90,24 +91,24 @@ ALTER TABLE `question` ADD FOREIGN KEY (`contestid`) REFERENCES `contest` (`cont
 
 ALTER TABLE `testcases` ADD FOREIGN KEY (`questionid`) REFERENCES `question` (`questionid`);
 
-ALTER TABLE `question` ADD FOREIGN KEY (`questionid`) REFERENCES `languages` (`questionid`);
+ALTER TABLE `languages` ADD FOREIGN KEY (`questionid`) REFERENCES `question` (`questionid`);
 
-ALTER TABLE `languages` ADD FOREIGN KEY (`questionid`) REFERENCES `submission` (`subID`);
+ALTER TABLE `languages` ADD FOREIGN KEY (`questionid`) REFERENCES `submission` (`subid`);
 
-ALTER TABLE `question` ADD FOREIGN KEY (`questionid`) REFERENCES `tags` (`questionid`);
+ALTER TABLE `tags` ADD FOREIGN KEY (`questionid`) REFERENCES `question` (`questionid`);
 
-ALTER TABLE `user` ADD FOREIGN KEY (`userid`) REFERENCES `USERINCONTEST` (`userid`);
+ALTER TABLE `USERINCONTEST` ADD FOREIGN KEY (`userid`) REFERENCES `user` (`userid`);
 
-ALTER TABLE `contest` ADD FOREIGN KEY (`contestid`) REFERENCES `USERINCONTEST` (`contestid`);
+ALTER TABLE `USERINCONTEST` ADD FOREIGN KEY (`contestid`) REFERENCES `contest` (`contestid`);
 
-ALTER TABLE `user` ADD FOREIGN KEY (`userid`) REFERENCES `USERSOLVEQUESTION` (`userid`);
+ALTER TABLE `USERSOLVEQUESTION` ADD FOREIGN KEY (`userid`) REFERENCES `user` (`userid`);
 
-ALTER TABLE `question` ADD FOREIGN KEY (`questionid`) REFERENCES `USERSOLVEQUESTION` (`questionid`);
+ALTER TABLE `USERSOLVEQUESTION` ADD FOREIGN KEY (`questionid`) REFERENCES `question` (`questionid`);
 
-ALTER TABLE `submission` ADD FOREIGN KEY (`subID`) REFERENCES `USERSOLVEQUESTION` (`subid`);
+ALTER TABLE `USERSOLVEQUESTION` ADD FOREIGN KEY (`subid`) REFERENCES `submission` (`subid`);
 
 ALTER TABLE `contest` ADD FOREIGN KEY (`userid`) REFERENCES `user` (`userid`);
 
 ALTER TABLE `testcases` ADD FOREIGN KEY (`testid`) REFERENCES `result` (`testid`);
 
-ALTER TABLE `submission` ADD FOREIGN KEY (`subID`) REFERENCES `result` (`subid`);
+ALTER TABLE `result` ADD FOREIGN KEY (`subid`) REFERENCES `submission` (`subid`);
