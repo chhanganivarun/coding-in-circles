@@ -39,7 +39,7 @@ CREATE TABLE `Testcases` (
   `SubtaskID` int,
   `Score` int,
   `QuestionID` int,
-  PRIMARY KEY(TestID, QuestionID)
+  PRIMARY KEY(TestID, QuestionID, SubtaskID)
 );
 
 CREATE TABLE `Languages` (
