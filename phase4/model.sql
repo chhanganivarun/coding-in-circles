@@ -119,4 +119,4 @@ ALTER TABLE `contest` ADD FOREIGN KEY (`Creator`) REFERENCES `User` (`UserID`);
 
 ALTER TABLE `Testcases` ADD FOREIGN KEY (`TestID`) REFERENCES `result` (`TestID`);
 
-ALTER TABLE Result ADD FOREIGN KEY (`SubmissionID`) REFERENCES Submission (`SubmissionID`);
+ALTER TABLE result ADD FOREIGN KEY (`SubmissionID`) REFERENCES Submission (`SubmissionID`);
