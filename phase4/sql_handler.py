@@ -35,22 +35,28 @@ def check_password(plain_text_password, hashed_password):
 
 def LogIn():
     global cur
+    global userid
     row = {}
-    row['email'] = input('EMail ID: ')
-    row['password'] = input('Password: ')
-    query = "SELECT * FROM user WHERE primaryemail = '{}'".format(row['email'])
+    row['PrimaryMailID'] = input('EMail ID: ')
+    row['Password'] = input('Password: ')
+    query = "SELECT * FROM User WHERE PrimaryMailID = '{}'".format(row['PrimaryMailID'])
     # query = "SELECT * FROM EMPLOYEE"
     print(query)
     cur.execute(query)
     rows = cur.fetchall()
     if len(rows) != 1:
         print("Error: Email doesn't exists")
-    hashed_password = get_hashed_password(row['password'])
-    print(hashed_password)
-    print(check_password(row['password'],hashed_password))
+    print(rows)
+    if check_password(row['Password'],rows[0]['PasswordHash']):
+        userid = rows[0]['UserID']
 
-def ViewProfile():
+
+def SubmitSolution():
     global cur
+    global userid
+    if userid == -1:
+        print('Please login to submit your solution')
+        return 
 
 def promoteEmployee():
     global cur
