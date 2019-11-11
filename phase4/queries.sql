@@ -35,7 +35,7 @@ CREATE TABLE `Question` (
 CREATE TABLE `Testcases` (
   `TestID` int,
   `Input` varchar(255),
-  `ExpectedDutput` varchar(255),
+  `ExpectedOutput` varchar(255),
   `SubtaskID` int,
   `Score` int,
   `QuestionID` int,
