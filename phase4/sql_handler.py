@@ -1,28 +1,7 @@
 #!/usr/bin/python3
 import subprocess as sp
 import pymysql, pymysql.cursors, bcrypt
-
-def SignUp():
-    global cur
-    row = {}
-    print("Enter new employee's details: ")
-    name = (input("Name (Fname Minit Lname): ")).split(' ')
-    row["Fname"] = name[0]
-    row["Minit"] = name[1]
-    row["Lname"] = name[2]
-
-    row["Ssn"] = input("SSN: ")
-    row["Bdate"] = input("Birth Date (YYYY-MM-DD): ")
-    row["Address"] = input("Address: ")
-    row["Sex"] = input("Sex: ")
-    row["Salary"] = float(input("Salary: "))
-    row["Dno"] = int(input("Dno: "))
-
-    query = "INSERT INTO EMPLOYEE(Fname, Minit, Lname, Ssn, Bdate, Address, Sex, Salary, Dno) VALUES('%s', '%c', '%s', '%s', '%s', '%s', '%c', %f, %d)" %(row["Fname"], row["Minit"], row["Lname"], row["Ssn"], row["Bdate"], row["Address"], row["Sex"], row["Salary"], row["Dno"])
-
-    cur.execute(query)
-    con.commit()
-    return
+import datetime
 
 def get_hashed_password(plain_text_password):
     # Hash a password for the first time
@@ -32,6 +11,41 @@ def get_hashed_password(plain_text_password):
 def check_password(plain_text_password, hashed_password):
     # Check hashed password. Using bcrypt, the salt is saved into the hash itself
     return bcrypt.checkpw(plain_text_password, hashed_password)
+
+
+def SignUp():
+    global cur
+    row = {}
+    print("Enter your details: ")
+    name = (input("Name (Fname Minit Lname): ")).split(' ')
+
+
+    row["FirstName"] = name[0]
+    if len(name)>2:
+        row["MiddleName"] = name[1]
+        row["LastName"] = name[2]
+    else:
+        row["MiddleName"] = ""
+        row["LastName"] = name[1]
+
+    
+    row['Institute'] = input("Enter Institute: ")
+    dob = input("Birth Date (YYYY-MM-DD) (Eg: 2019-11-11): ")
+    DOB = dob.split('-')
+    try:
+        row['DOB'] = datetime.datetime(int(DOB[0]),int(DOB[1]),int(DOB[2]))
+    except Exception as e:
+        print("Invalid Date",str(e))
+        return
+    row['PasswordHash'] = get_hashed_password(input("Enter Password: "))
+    row['PrimaryMailID'] = input("Enter mail id: ")
+
+    query = "INSERT INTO User (FirstName, MiddleName, LastName, Rating, JoinDate, Institute, DOB, PasswordHash, PrimaryMailID, isAdmin) VALUES('{}', '{}', '{}', '{}', NOW(), '{}', '{}', '{}', '{}', 0)".format(row["FirstName"], row["MiddleName"], row["LastName"], 0, row["Institute"], row["DOB"], row["PasswordHash"], row["PrimaryMailID"])
+
+    cur.execute(query)
+    con.commit()
+    return
+
 
 def LogIn():
     global cur
@@ -80,7 +94,7 @@ def checkMessages():
 optionFunctionMapping = {
     1: SignUp,
     2: LogIn,
-    3: ViewProfile,
+    3: SubmitSolution,
     4: rewardDepartment,
     5: projectStatistics,
     6: departmentStatistics,
