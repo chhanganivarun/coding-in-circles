@@ -158,7 +158,7 @@ def ViewUser():
             print("------------------------")
     
 def ViewQuestions():
-    query = "SELECT Question.QuestionID, Question.Title, User.UserID, User.FirstName FROM  User, Question WHERE QuestionID.Creator = User.UserID ORDER BY Score DESC"
+    query = "SELECT Question.QuestionID, Question.Title, User.UserID, User.FirstName FROM  User, Question WHERE Question.Creator = User.UserID ORDER BY Score DESC"
     cur.execute(query)
     rows = cur.fetchall()
     for x in rows:
@@ -482,35 +482,35 @@ optionFunctionMapping = {
     1: SignUp,
     2: LogIn,
     3: ViewUser,
-    4: AddQuestion,
-    5: AddContest,
-    6: PlayQuestion,
-    7: PlayContest,
-    8: showResultsByQuestions,
-    9: showResultsByUser,
-    10: LogOut,
-    11: Exit
+    4: ViewQuestions,
+    5: AddQuestion,
+    6: AddContest,
+    7: PlayQuestion,
+    8: PlayContest,
+    9: showResultsByQuestions,
+    10: showResultsByUser,
+    11: LogOut,
+    12: Exit
 }
 import json
 menu = """
     1: SignUp,
     2: LogIn,
     3: ViewUser,
-    4: AddQuestion,
-    5: AddContest,
-    6: PlayQuestion,
-    7: PlayContest,
-    8: showResultsByQuestions,
-    9: showResultsByUser,
-    10: LogOut,
-    11: Exit
+    4: ViewQuestions,
+    5: AddQuestion,
+    6: AddContest,
+    7: PlayQuestion,
+    8: PlayContest,
+    9: showResultsByQuestions,
+    10: showResultsByUser,
+    11: LogOut,
+    12: Exit
 """
 print("Enter DB creds")
 username = input("Username: ")
 password = input("Password: ")
 
-username = "root"
-password = "12345678"
 userid = -1
 user = dict()
 tmp = sp.call('clear -x',shell=True)

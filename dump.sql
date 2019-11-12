@@ -27,7 +27,7 @@ CREATE TABLE `Languages` (
   `QuestionID` int(11) NOT NULL,
   PRIMARY KEY (`LanguageName`,`QuestionID`),
   KEY `QuestionID` (`QuestionID`),
-  CONSTRAINT `Languages_ibfk_1` FOREIGN KEY (`QuestionID`) REFERENCES `Question` (`QuestionID`)
+  CONSTRAINT `Languages_ibfk_1` FOREIGN KEY (`QuestionID`) REFERENCES `Question` (`QuestionID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -57,8 +57,8 @@ CREATE TABLE `Question` (
   PRIMARY KEY (`QuestionID`),
   KEY `Creator` (`Creator`),
   KEY `ContestID` (`ContestID`),
-  CONSTRAINT `Question_ibfk_1` FOREIGN KEY (`Creator`) REFERENCES `User` (`UserID`),
-  CONSTRAINT `Question_ibfk_2` FOREIGN KEY (`ContestID`) REFERENCES `contest` (`ContestID`)
+  CONSTRAINT `Question_ibfk_1` FOREIGN KEY (`Creator`) REFERENCES `User` (`UserID`) ON DELETE CASCADE,
+  CONSTRAINT `Question_ibfk_2` FOREIGN KEY (`ContestID`) REFERENCES `contest` (`ContestID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -82,7 +82,7 @@ CREATE TABLE `SecondaryEmails` (
   `UserID` int(11) NOT NULL,
   `MailID` varchar(255) NOT NULL,
   PRIMARY KEY (`UserID`,`MailID`),
-  CONSTRAINT `SecondaryEmails_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`)
+  CONSTRAINT `SecondaryEmails_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -103,9 +103,9 @@ DROP TABLE IF EXISTS `Submission`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Submission` (
-  `SubmissionID` int(11) NOT NULL,
+  `SubmissionID` int(11) NOT NULL AUTO_INCREMENT,
   `code` varchar(255) DEFAULT NULL,
-  `SubmissionTime` int(11) DEFAULT NULL,
+  `SubmissionTime` datetime DEFAULT NULL,
   `LanguageName` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`SubmissionID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -132,7 +132,7 @@ CREATE TABLE `Tags` (
   `QuestionID` int(11) NOT NULL,
   PRIMARY KEY (`Tag`,`QuestionID`),
   KEY `QuestionID` (`QuestionID`),
-  CONSTRAINT `Tags_ibfk_1` FOREIGN KEY (`QuestionID`) REFERENCES `Question` (`QuestionID`)
+  CONSTRAINT `Tags_ibfk_1` FOREIGN KEY (`QuestionID`) REFERENCES `Question` (`QuestionID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -155,14 +155,13 @@ DROP TABLE IF EXISTS `Testcases`;
 CREATE TABLE `Testcases` (
   `TestID` int(11) NOT NULL,
   `Input` varchar(255) DEFAULT NULL,
-  `ExpectedDutput` varchar(255) DEFAULT NULL,
-  `SubtaskID` int(11) DEFAULT NULL,
+  `ExpectedOutput` varchar(255) DEFAULT NULL,
+  `SubtaskID` int(11) NOT NULL,
   `Score` int(11) DEFAULT NULL,
   `QuestionID` int(11) NOT NULL,
-  PRIMARY KEY (`TestID`,`QuestionID`),
+  PRIMARY KEY (`TestID`,`QuestionID`,`SubtaskID`),
   KEY `QuestionID` (`QuestionID`),
-  CONSTRAINT `Testcases_ibfk_1` FOREIGN KEY (`QuestionID`) REFERENCES `Question` (`QuestionID`),
-  CONSTRAINT `Testcases_ibfk_2` FOREIGN KEY (`TestID`) REFERENCES `result` (`TestID`)
+  CONSTRAINT `Testcases_ibfk_1` FOREIGN KEY (`QuestionID`) REFERENCES `Question` (`QuestionID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -198,7 +197,7 @@ CREATE TABLE `User` (
   `Category` int(11) DEFAULT NULL,
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `PrimaryMailID` (`PrimaryMailID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -207,7 +206,7 @@ CREATE TABLE `User` (
 
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
-INSERT INTO `User` VALUES (1,'Admin','','',1000,'2019-11-11 19:25:08','IIIT Hyd','2019-11-11 19:25:08','$2a$12$U24j/b.7hloSviayPSYSCeiTQXU.hAdxyWq9cDv50djNk9yUzqQk.',NULL,'admin@admin.com',1,1),(2,'Varun','','Chhangani',0,'2019-11-11 20:10:40','IIIT Hyd','2000-12-30 00:00:00','$2a$12$yWdSVLOZTWDHN90IerG48u4ciIyr6guligIWuidJsAkVh6HSSO9aW',NULL,'varunchhangani@gmail.com',NULL,NULL);
+INSERT INTO `User` VALUES (1,'admin','','',1000,'2019-11-12 13:14:35','IIIT Hyd','2019-11-12 13:14:35','$2a$12$U24j/b.7hloSviayPSYSCeiTQXU.hAdxyWq9cDv50djNk9yUzqQk.',NULL,'admin@admin.com',1,1);
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -223,8 +222,8 @@ CREATE TABLE `UserParticipatesInContest` (
   `ContestID` int(11) NOT NULL,
   PRIMARY KEY (`UserID`,`ContestID`),
   KEY `ContestID` (`ContestID`),
-  CONSTRAINT `UserParticipatesInContest_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`),
-  CONSTRAINT `UserParticipatesInContest_ibfk_2` FOREIGN KEY (`ContestID`) REFERENCES `contest` (`ContestID`)
+  CONSTRAINT `UserParticipatesInContest_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE,
+  CONSTRAINT `UserParticipatesInContest_ibfk_2` FOREIGN KEY (`ContestID`) REFERENCES `contest` (`ContestID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -251,9 +250,9 @@ CREATE TABLE `UserSolvesQuestion` (
   PRIMARY KEY (`UserID`,`QuestionID`,`SubmissionID`),
   KEY `QuestionID` (`QuestionID`),
   KEY `SubmissionID` (`SubmissionID`),
-  CONSTRAINT `UserSolvesQuestion_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`),
-  CONSTRAINT `UserSolvesQuestion_ibfk_2` FOREIGN KEY (`QuestionID`) REFERENCES `Question` (`QuestionID`),
-  CONSTRAINT `UserSolvesQuestion_ibfk_3` FOREIGN KEY (`SubmissionID`) REFERENCES `Submission` (`SubmissionID`)
+  CONSTRAINT `UserSolvesQuestion_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE,
+  CONSTRAINT `UserSolvesQuestion_ibfk_2` FOREIGN KEY (`QuestionID`) REFERENCES `Question` (`QuestionID`) ON DELETE CASCADE,
+  CONSTRAINT `UserSolvesQuestion_ibfk_3` FOREIGN KEY (`SubmissionID`) REFERENCES `Submission` (`SubmissionID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -274,7 +273,7 @@ DROP TABLE IF EXISTS `contest`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `contest` (
-  `ContestID` int(11) NOT NULL,
+  `ContestID` int(11) NOT NULL AUTO_INCREMENT,
   `contestname` varchar(255) DEFAULT NULL,
   `CreationDate` datetime DEFAULT NULL,
   `MinScoreAllowed` int(11) DEFAULT NULL,
@@ -284,7 +283,7 @@ CREATE TABLE `contest` (
   `Creator` int(11) DEFAULT NULL,
   PRIMARY KEY (`ContestID`),
   KEY `Creator` (`Creator`),
-  CONSTRAINT `contest_ibfk_1` FOREIGN KEY (`Creator`) REFERENCES `User` (`UserID`)
+  CONSTRAINT `contest_ibfk_1` FOREIGN KEY (`Creator`) REFERENCES `User` (`UserID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -311,7 +310,8 @@ CREATE TABLE `result` (
   `EvaulationDate` datetime DEFAULT NULL,
   PRIMARY KEY (`TestID`,`SubmissionID`),
   KEY `SubmissionID` (`SubmissionID`),
-  CONSTRAINT `result_ibfk_1` FOREIGN KEY (`SubmissionID`) REFERENCES `Submission` (`SubmissionID`)
+  CONSTRAINT `result_ibfk_1` FOREIGN KEY (`TestID`) REFERENCES `Testcases` (`TestID`) ON DELETE CASCADE,
+  CONSTRAINT `result_ibfk_2` FOREIGN KEY (`SubmissionID`) REFERENCES `Submission` (`SubmissionID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -333,4 +333,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-12 11:25:30
+-- Dump completed on 2019-11-12 13:39:17
