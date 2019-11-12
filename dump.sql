@@ -198,7 +198,7 @@ CREATE TABLE `User` (
   `Category` int(11) DEFAULT NULL,
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `PrimaryMailID` (`PrimaryMailID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -207,7 +207,7 @@ CREATE TABLE `User` (
 
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
-INSERT INTO `User` VALUES (1,'Admin','','',1000,'2019-11-11 19:25:08','IIIT Hyd','2019-11-11 19:25:08','$2a$12$U24j/b.7hloSviayPSYSCeiTQXU.hAdxyWq9cDv50djNk9yUzqQk.',NULL,'admin@admin.com',1,1);
+INSERT INTO `User` VALUES (1,'Admin','','',1000,'2019-11-11 19:25:08','IIIT Hyd','2019-11-11 19:25:08','$2a$12$U24j/b.7hloSviayPSYSCeiTQXU.hAdxyWq9cDv50djNk9yUzqQk.',NULL,'admin@admin.com',1,1),(2,'Varun','','Chhangani',0,'2019-11-11 20:10:40','IIIT Hyd','2000-12-30 00:00:00','$2a$12$yWdSVLOZTWDHN90IerG48u4ciIyr6guligIWuidJsAkVh6HSSO9aW',NULL,'varunchhangani@gmail.com',NULL,NULL);
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -333,4 +333,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-11 19:32:41
+-- Dump completed on 2019-11-12 11:25:30

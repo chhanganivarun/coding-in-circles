@@ -1,3 +1,4 @@
+ 
 CREATE DATABASE IF NOT EXISTS OJ;
 use OJ;
 
@@ -35,11 +36,11 @@ CREATE TABLE `Question` (
 CREATE TABLE `Testcases` (
   `TestID` int,
   `Input` varchar(255),
-  `ExpectedDutput` varchar(255),
+  `ExpectedOutput` varchar(255),
   `SubtaskID` int,
   `Score` int,
   `QuestionID` int,
-  PRIMARY KEY(TestID, QuestionID)
+  PRIMARY KEY(TestID, QuestionID,SubtaskID)
 );
 
 CREATE TABLE `Languages` (
@@ -55,9 +56,9 @@ CREATE TABLE `Tags` (
 );
 
 CREATE TABLE `Submission` (
-  `SubmissionID` int PRIMARY KEY,
+  `SubmissionID` int PRIMARY KEY AUTO_INCREMENT,
   `code` varchar(255),
-  `SubmissionTime` int,
+  `SubmissionTime` datetime,
   `LanguageName` varchar(255)
 );
 
@@ -75,7 +76,7 @@ CREATE TABLE `UserSolvesQuestion` (
 );
 
 CREATE TABLE `contest` (
-  `ContestID` int PRIMARY KEY,
+  `ContestID` int PRIMARY KEY AUTO_INCREMENT,
   `contestname` varchar(255),
   `CreationDate` datetime,
   `MinScoreAllowed` int,
@@ -93,30 +94,32 @@ CREATE TABLE `result` (
   PRIMARY KEY (`TestID`, `SubmissionID`)
 );
 
-ALTER TABLE `SecondaryEmails` ADD FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`);
+ALTER TABLE `SecondaryEmails` ADD FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE;
 
-ALTER TABLE `Question` ADD FOREIGN KEY (`Creator`) REFERENCES `User` (`UserID`);
+ALTER TABLE `Question` ADD FOREIGN KEY (`Creator`) REFERENCES `User` (`UserID`) ON DELETE CASCADE;
 
-ALTER TABLE `Question` ADD FOREIGN KEY (`ContestID`) REFERENCES `contest` (`ContestID`);
+ALTER TABLE `Question` ADD FOREIGN KEY (`ContestID`) REFERENCES `contest` (`ContestID`) ON DELETE CASCADE;
 
-ALTER TABLE `Testcases` ADD FOREIGN KEY (`QuestionID`) REFERENCES `Question` (`QuestionID`);
+ALTER TABLE `Testcases` ADD FOREIGN KEY (`QuestionID`) REFERENCES `Question` (`QuestionID`) ON DELETE CASCADE;
 
-ALTER TABLE Languages ADD FOREIGN KEY (`QuestionID`) REFERENCES Question (`QuestionID`);
+ALTER TABLE Languages ADD FOREIGN KEY (`QuestionID`) REFERENCES Question (`QuestionID`) ON DELETE CASCADE;
 
-ALTER TABLE Tags ADD FOREIGN KEY (`QuestionID`) REFERENCES Question (`QuestionID`);
+ALTER TABLE Tags ADD FOREIGN KEY (`QuestionID`) REFERENCES Question (`QuestionID`) ON DELETE CASCADE;
 
-ALTER TABLE `UserParticipatesInContest` ADD FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`);
+ALTER TABLE `UserParticipatesInContest` ADD FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE;
 
-ALTER TABLE UserParticipatesInContest ADD FOREIGN KEY (`ContestID`) REFERENCES contest (`ContestID`);
+ALTER TABLE UserParticipatesInContest ADD FOREIGN KEY (`ContestID`) REFERENCES contest (`ContestID`) ON DELETE CASCADE;
 
-ALTER TABLE UserSolvesQuestion ADD FOREIGN KEY (`UserID`) REFERENCES User (`UserID`);
+ALTER TABLE UserSolvesQuestion ADD FOREIGN KEY (`UserID`) REFERENCES User (`UserID`) ON DELETE CASCADE;
 
-ALTER TABLE UserSolvesQuestion ADD FOREIGN KEY (`QuestionID`) REFERENCES Question (`QuestionID`);
+ALTER TABLE UserSolvesQuestion ADD FOREIGN KEY (`QuestionID`) REFERENCES Question (`QuestionID`) ON DELETE CASCADE;
 
-ALTER TABLE UserSolvesQuestion ADD FOREIGN KEY (`SubmissionID`) REFERENCES Submission (`SubmissionID`);
+ALTER TABLE UserSolvesQuestion ADD FOREIGN KEY (`SubmissionID`) REFERENCES Submission (`SubmissionID`) ON DELETE CASCADE;
 
-ALTER TABLE `contest` ADD FOREIGN KEY (`Creator`) REFERENCES `User` (`UserID`);
+ALTER TABLE `contest` ADD FOREIGN KEY (`Creator`) REFERENCES `User` (`UserID`) ON DELETE CASCADE;
 
-ALTER TABLE `Testcases` ADD FOREIGN KEY (`TestID`) REFERENCES `result` (`TestID`);
+ALTER TABLE `result` ADD FOREIGN KEY (`TestID`) REFERENCES `Testcases` (`TestID`) ON DELETE CASCADE;
 
-ALTER TABLE result ADD FOREIGN KEY (`SubmissionID`) REFERENCES Submission (`SubmissionID`);
+ALTER TABLE result ADD FOREIGN KEY (`SubmissionID`) REFERENCES Submission (`SubmissionID`) ON DELETE CASCADE;
+
+INSERT INTO User (FirstName, MiddleName, LastName, Rating, JoinDate, Institute, DOB, PasswordHash, PrimaryMailID, isAdmin, Category) values ('admin','','',1000,NOW(),'IIIT Hyd',NOW(),'$2a$12$U24j/b.7hloSviayPSYSCeiTQXU.hAdxyWq9cDv50djNk9yUzqQk.','admin@admin.com',1,1);
