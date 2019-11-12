@@ -1,8 +1,19 @@
 #!/usr/bin/python3
 import subprocess as sp
-import pymysql, pymysql.cursors, bcrypt, datetime, sys, random
+import pymysql, pymysql.cursors, bcrypt, datetime, sys, random, json
 
 cid=-1
+class color:
+   PURPLE = '\033[95m'
+   CYAN = '\033[96m'
+   DARKCYAN = '\033[36m'
+   BLUE = '\033[94m'
+   GREEN = '\033[92m'
+   YELLOW = '\033[93m'
+   RED = '\033[91m'
+   BOLD = '\033[1m'
+   UNDERLINE = '\033[4m'
+   END = '\033[0m'
 
 def get_hashed_password(plain_text_password):
     # Hash a password for the first time
@@ -71,6 +82,82 @@ def LogIn():
     print(rows[0])
     user = rows[0]
         
+def UpdateInfo():
+    global cur
+    global userid
+    if userid == -1:
+        print('Please login to update your information')
+        return
+    query = "SELECT UserID,FirstName,MiddleName,LastName,Institute,DOB,PrimaryMailID FROM User WHERE User.UserID = {}".format(userid)
+    cur.execute(query)
+    rows = cur.fetchall()
+    print('Your Current info:', json.dumps(rows[0],indent=4))
+
+    print("Enter your New details: ")
+    row = {}
+    name = (input("Name (Fname Minit Lname): ")).split(' ')
+    row["FirstName"] = name[0]
+    if len(name)>2:
+        row["MiddleName"] = name[1]
+        row["LastName"] = name[2]
+    elif len(name)==2:
+        row["MiddleName"] = ""
+        row["LastName"] = name[1]
+    else:
+        row["MiddleName"] = ""
+        row["LastName"] = ""
+
+    row['Institute'] = input("Enter Institute: ")
+    dob = input("Birth Date (YYYY-MM-DD) (Eg: 2019-11-11): ")
+    DOB = dob.split('-')
+    try:
+        row['DOB'] = datetime.datetime(int(DOB[0]),int(DOB[1]),int(DOB[2]))
+    except Exception as e:
+        print("Invalid Date ",str(e))
+        return
+    row['PrimaryMailID'] = input("Enter mail id: ")
+
+    query = "UPDATE User SET FirstName='{}', MiddleName='{}', LastName='{}', Institute='{}', DOB='{}', PrimaryMailID='{}' WHERE UserID={}".format(row["FirstName"], row["MiddleName"], row["LastName"], row["Institute"], row["DOB"], row["PrimaryMailID"],userid)
+
+    cur.execute(query)
+
+    query = "SELECT MailID FROM SecondaryEmails WHERE UserID={}".format(userid)
+    cur.execute(query)
+    rows = cur.fetchall()
+    print('Your Secondary Emails Are:', rows)
+    newsec=input("Enter updated Secondary Emails(includeing oldones) seprated by space\n").split(' ')
+    query = "DELETE FROM SecondaryEmails WHERE UserID={}".format(userid)
+    cur.execute(query)
+    for email in newsec:
+        query = "INSERT INTO SecondaryEmails (UserID,MailID) VALUES('{}', '{}')".format(userid,email)
+
+    return
+
+def UpdatePass():
+    global cur
+    global userid
+    if userid == -1:
+        print('Please login to update your information')
+        return
+    currpass=get_hashed_password(input("Enter Password: "))
+    query = "SELECT PasswordHash FROM User WHERE UserID={}".format(userid)
+    cur.execute(query)
+    rows = cur.fetchall()
+    if currpass==rows[0]['PasswordHash']:
+        newpass = get_hashed_password(input("Enter Password: "))
+        query =" UPDATE User SET PasswordHash='{}' WHERE UserID={}".format(newpass,userid)
+        print("Password Updated")
+    else:
+        print("Incorrect Password!!")
+    
+def ListQuestions():
+    query = "SELECT Question.QuestionID, Question.Title, User.UserID, User.FirstName FROM  User, Question WHERE Question.Creator = User.UserID ORDER BY Score DESC"
+    cur.execute(query)
+    rows = cur.fetchall()
+    for x in rows:
+        print(x)
+    else:
+        print("------------------------")
 
 def ViewUser():
     global cur
@@ -156,27 +243,176 @@ def ViewUser():
             print(x)
         else:
             print("------------------------")
-    
-def ViewQuestions():
-    query = "SELECT Question.QuestionID, Question.Title, User.UserID, User.FirstName FROM  User, Question WHERE Question.Creator = User.UserID ORDER BY Score DESC"
+
+def ViewQuestion():
+    global cur
+    targetUser = input('Enter QuestionID or Name of Question you want to view: ')
+    if targetUser.isdigit():
+        query = "SELECT * FROM Question WHERE Question.QuestionID = {}".format(targetUser)
+        cur.execute(query)
+        rows = cur.fetchall()
+        if not len(rows):
+            print("Question doesn't exists")
+            return
+        print(rows[0])
+        qid = rows[0]['QuestionID']
+        query = "SELECT LanguageName FROM Language, Question WHERE Question.QuestionID = Language.QuestionID and Question.Question = {}".format(qid)
+        cur.execute(query)
+        rows = cur.fetchall()
+        languages = [ x['LanguageName'] for x in rows ]
+        print('Allowed Languages: ',languages)
+        try:
+            fi = open(rows[0]['text'],'r')
+            lines = fi.getlines()
+            text = "\n".join(lines)
+            print(text)
+        except Exception as e:
+            print(str(e))
+        finally:
+            fi.close()
+
+
+    else:
+        query = "SELECT * FROM Question WHERE Question.Title like '%{}%'".format(targetUser)
+        cur.execute(query)
+        rows = cur.fetchall()
+        if not len(rows):
+            print("Question doesn't exists")
+            return
+        for x in rows:
+            print(x)
+            qid = x['QuestionID']
+            query = "SELECT LanguageName FROM Language, Question WHERE Question.QuestionID = Language.QuestionID and Question.Question = {}".format(qid)
+            cur.execute(query)
+            rows = cur.fetchall()
+            languages = [ x['LanguageName'] for x in rows ]
+            print('Allowed Languages: ',languages)
+
+            try:
+                fi = open(x['text'],'r')
+                lines = fi.getlines()
+                text = "\n".join(lines)
+                print(text)
+            except Exception as e:
+                print(str(e))
+            finally:
+                fi.close()
+
+def ViewContest():
+    global cur
+    targetUser = input('Enter ContestID or Name of Contest you want to view: ')
+    if targetUser.isdigit():
+        query = "SELECT * FROM Contest WHERE Contest.ContestID = {}".format(targetUser)
+        cur.execute(query)
+        rows = cur.fetchall()
+        if not len(rows):
+            print("Contest doesn't exists")
+            return
+        print(rows[0])
+        print("Questions in Contest")
+        query = "SELECT * FROM Question WHERE Question.ContestID = {}".format(targetUser)
+        cur.execute(query)
+        rows = cur.fetchall()
+        for x in rows:
+            print(x)
+            qid = x['QuestionID']
+            query = "SELECT LanguageName FROM Language, Question WHERE Question.QuestionID = Language.QuestionID and Question.Question = {}".format(qid)
+            cur.execute(query)
+            rows = cur.fetchall()
+            languages = [ x['LanguageName'] for x in rows ]
+            print('Allowed Languages: ',languages)
+            try:
+                fi = open(x['text'],'r')
+                lines = fi.getlines()
+                text = "\n".join(lines)
+                print(text)
+            except Exception as e:
+                print(str(e))
+            finally:
+                fi.close()
+    else:
+        query = "SELECT * FROM Contest WHERE Contest.contestname = {}".format(targetUser)
+        cur.execute(query)
+        rows = cur.fetchall()
+        if not len(rows):
+            print("Contest doesn't exists")
+            return
+        for x in rows:
+            print(x)
+            print("Questions in Contest")
+            query = "SELECT * FROM Contest,Question WHERE Contest.ContestID=Question.ContestID and Contest.like = '%{}%'".format(targetUser)
+            cur.execute(query)
+            rowss = cur.fetchall()
+            for y in rowss:
+                print(y)
+                qid = y['QuestionID']
+                query = "SELECT LanguageName FROM Language, Question WHERE Question.QuestionID = Language.QuestionID and Question.Question = {}".format(qid)
+                cur.execute(query)
+                rows = cur.fetchall()
+                languages = [ y['LanguageName'] for y in rows ]
+                print('Allowed Languages: ',languages)
+
+                try:
+                    fi = open(y['text'],'r')
+                    lines = fi.getlines()
+                    text = "\n".join(lines)
+                    print(text)
+                except Exception as e:
+                    print(str(e))
+                finally:
+                    fi.close()
+
+def DeleteUser():
+    global cur
+    global userid
+    global user
+    if userid == -1:
+        print('Please login to delete contest')
+        return
+    uid=input("Enter UserID you want to delete: ")
+    isadm = user['isAdmin']
+    if uid==userid or isadm == '1' :
+        query="DELETE FROM User WHERE UserID={}".format(uid)
+        cur.execute(query)
+    else:
+        print("You are not authorised to delete User",uid)
+
+def DeleteQuestion():
+    global cur
+    global userid
+    global user
+    if userid == -1:
+        print('Please login to delete question')
+        return
+    qid=input("Enter QuestionID you want to delete: ")
+    query="SELECT Creator FROM Question WHERE QuestionID={}".format(qid)
     cur.execute(query)
     rows = cur.fetchall()
-    for x in rows:
-        print(x)
+    qowner = rows[0]['Creator']
+    isadm = user['isAdmin']
+    if qowner==userid or isadm == '1':
+        query="DELETE FROM Question WHERE QuestionID={}".format(qid)
     else:
-        print("------------------------")
+        print("You are not authorised to delete question",qid)
 
-class color:
-   PURPLE = '\033[95m'
-   CYAN = '\033[96m'
-   DARKCYAN = '\033[36m'
-   BLUE = '\033[94m'
-   GREEN = '\033[92m'
-   YELLOW = '\033[93m'
-   RED = '\033[91m'
-   BOLD = '\033[1m'
-   UNDERLINE = '\033[4m'
-   END = '\033[0m'
+def DeleteContest():
+    global cur
+    global userid
+    global user
+    if userid == -1:
+        print('Please login to delete contest')
+        return
+    cid=input("Enter ContestID you want to delete: ")
+    query="SELECT Creator FROM contest WHERE ContestID={}".format(cid)
+    cur.execute(query)
+    rows = cur.fetchall()
+    cowner = rows[0]['Creator']
+    isadm = user['isAdmin']
+    if cowner==userid or isadm == '1':
+        query="DELETE FROM contest WHERE ContestID={}".format(cid)
+        cur.execute(query)
+    else:
+        print("You are not authorised to delete contest",cid)
 
 def AddQuestion():
     global cur
@@ -219,16 +455,16 @@ def AddQuestion():
         
     except Exception as e:
         print(str(e))
-    print(color.BLUE+color.BOLD+"TESTCASES\n"+color.END)
+    print(color.BLUE+color.BOLD+"Testcases\n"+color.END)
 
 
-    try: sno = int(input(color.CYAN+"no of subtask "+color.END))
+    try: sno = int(input(color.CYAN+"Enter number of subtask: "+color.END))
     except: 
         print("please enter number for subtask id")
         return
 
     for i in range(sno):
-        print(color.CYAN+"ENTER NO. OF TESTCASES FOR SUBTASK "+str(i+1)+": "+color.END)
+        print(color.CYAN+"Enter number of testcases for subtask "+str(i+1)+": "+color.END,end="")
         try:
             qno = int(input())
         except: 
@@ -236,7 +472,7 @@ def AddQuestion():
             return
         
         for j in range(qno):
-            print("INPUT: ")
+            print("Input: ")
             text = sys.stdin.read()
             inp = "testcase/"+str(qid)+"_"+str(i+1)+"_"+str(j+1)+"_in.txt"
             fo = open(inp,"w+")
@@ -249,7 +485,7 @@ def AddQuestion():
             fo = open(out,"w+")
             fo.write(text)
             fo.close()
-            score=input("score: ")
+            score=input("Score: ")
             if not score.isdigit():
                 print("please enter number\n")
                 return
@@ -317,7 +553,7 @@ def AddContest():
         print("Invalid score ",str(e))
         return
 
-    name=input(color.CYAN+"enter contest name :\n"+color.END)
+    name=input(color.CYAN+"enter contest name:\n"+color.END)
     # date=input("enter dta :")
     #cerationdata,min,max,start,end is left
     query="INSERT INTO contest(contestname, CreationDate, MinScoreAllowed, MaxScoreAllowed, StartTime, EndTime, Creator) VALUES('{}', NOW(), {},{},'{}','{}' ,'{}')".format(name,MinScore,MaxScore,StartTime,EndTime,userid)
@@ -328,11 +564,8 @@ def AddContest():
     except:
         print("please enter no.")
         return
-    for i in range(qno):
-        AddQuestion()
+    [ AddQuestion() for i in range(qno) ]
     print(color.GREEN+"Contest Added Succesfully\n\n"+color.END)
-
-    
 
 def playques(qid):
     global cur
@@ -409,7 +642,7 @@ def PlayQuestion():
         print("please login or signup\n")
         return   
 
-    try:qid=int(input("enter question id:"))
+    try:qid=int(input("Enter Question ID: "))
     except:print("please enter no.")    
     cur.execute("SELECT * FROM Question WHERE QuestionID="+str(qid))
     data=cur.fetchall()
@@ -425,7 +658,7 @@ def PlayContest():
         print("please login or signup\n")
         return   
 
-    try:cid=int(input("enter contest id:"))
+    try:cid=int(input("Enter contest ID: "))
     except:print("please enter no.")    
     cur.execute("SELECT * from User where UserID = {}".format(userid))
     rows = cur.fetchall()
@@ -446,7 +679,7 @@ def PlayContest():
     data=cur.fetchall()
     # print(data)
     for i in data:
-        print(color.CYAN+"FOR QUESTIONID: "+str(i)+"\n"+color.END)
+        print(color.CYAN+"FOR Question ID: "+str(i)+"\n"+color.END)
         playques(i["QuestionID"])
     try:
         cur.execute("INSERT INTO UserParticipatesInContest(UserID,ContestID) VALUES('%s','%s')" %(userid,cid))
@@ -455,7 +688,7 @@ def PlayContest():
     print(color.BOLD+color.GREEN+"CONTEST PLAYED SUCCSESSFULLY"+color.END)
 
 def showResultsByQuestions():
-    qid = int(input("Enter Question ID"))
+    qid = int(input("Enter Question ID: "))
     query = "SELECT * from Submission, Question, UserSolvesQuestion, result  WHERE Question.QuestionID = UserSolvesQuestion.QuestionID and Submission.SubmissionID = UserSolvesQuestion.SubmissionID and result.SubmissionID = Submission.SubmissionID and Question.QuestionID = {}".format(qid)
     cur.execute(query)
     rows = cur.fetchall()
@@ -463,17 +696,37 @@ def showResultsByQuestions():
         print(x)
 
 def showResultsByUser():
-    uid = int(input("Enter User ID"))
+    uid = int(input("Enter User ID: "))
     query = "SELECT * from Submission, Question, UserSolvesQuestion, result  WHERE User.UserID = UserSolvesQuestion.UserID and Submission.SubmissionID = UserSolvesQuestion.SubmissionID and result.SubmissionID = Submission.SubmissionID and Question.UserID = {}".format(uid)
     cur.execute(query)
     rows = cur.fetchall()
     for x in rows:
         print(x)
 
+def UnrateQuestion():
+    global cur
+    global userid
+    global user
+    if userid == -1:
+        print('Please login to delete question')
+        return
+    qid=input("Enter QuestionID you want to unrate: ")
+    query="SELECT Creator FROM Question WHERE QuestionID={}".format(qid)
+    cur.execute(query)
+    rows = cur.fetchall()
+    qowner = rows[0]['Creator']
+    isadm = user['isAdmin']
+    if qowner==userid or isadm == '1':
+        query="UPDATE Testcases SET Score = 0 WHERE QuestionID={}".format(qid)
+    else:
+        print("You are not authorised to remove Rating for this question",qid)
+
 
 def LogOut():
     global userid
+    global user
     userid = -1
+    user = dict()
 
 def Exit():
     exit()
@@ -481,31 +734,47 @@ def Exit():
 optionFunctionMapping = {
     1: SignUp,
     2: LogIn,
-    3: ViewUser,
-    4: ViewQuestions,
-    5: AddQuestion,
-    6: AddContest,
-    7: PlayQuestion,
-    8: PlayContest,
-    9: showResultsByQuestions,
-    10: showResultsByUser,
-    11: LogOut,
-    12: Exit
+    3: UpdateInfo,
+    4: UpdatePass,
+    5: ViewUser,
+    6: ListQuestions,
+    7: ViewQuestion,
+    8: ViewContest,
+    9: AddQuestion,
+    10: AddContest,
+    11: PlayQuestion,
+    12: PlayContest,
+    13: showResultsByQuestions,
+    14: showResultsByUser,
+    15: DeleteContest,
+    16: DeleteQuestion,
+    17: DeleteUser,
+    18: UnrateQuestion,
+    19: LogOut,
+    20: Exit
 }
 import json
 menu = """
     1: SignUp,
     2: LogIn,
-    3: ViewUser,
-    4: ViewQuestions,
-    5: AddQuestion,
-    6: AddContest,
-    7: PlayQuestion,
-    8: PlayContest,
-    9: showResultsByQuestions,
-    10: showResultsByUser,
-    11: LogOut,
-    12: Exit
+    3: UpdateInfo,
+    4: UpdatePass,
+    5: ViewUser,
+    6: ListQuestions,
+    7: ViewQuestion,
+    8: ViewContest,
+    9: AddQuestion,
+    10: AddContest,
+    11: PlayQuestion,
+    12: PlayContest,
+    13: showResultsByQuestions,
+    14: showResultsByUser,
+    15: DeleteContest,
+    16: DeleteQuestion,
+    17: DeleteUser,
+    18: UnrateQuestion,
+    19: LogOut,
+    20: Exit
 """
 print("Enter DB creds")
 username = input("Username: ")
@@ -537,9 +806,9 @@ try:
                 con.commit()
                 tmp = input("Enter any key to CONTINUE>")
             except Exception as e:
-                tmp = sp.call('clear -x',shell=True)
                 print(str(e))
                 tmp = input("Enter any key to CONTINUE>")
+
 except Exception as e:
     tmp = sp.call('clear -x',shell=True)
     print(str(e))
