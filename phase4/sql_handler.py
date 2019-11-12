@@ -18,11 +18,11 @@ class color:
 def get_hashed_password(plain_text_password):
     # Hash a password for the first time
     #   (Using bcrypt, the salt is saved into the hash itself)
-    return bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    return bcrypt.hashpw(plain_text_password, bcrypt.gensalt())
 
 def check_password(plain_text_password, hashed_password):
     # Check hashed password. Using bcrypt, the salt is saved into the hash itself
-    return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_password.encode('utf-8'))
+    return bcrypt.checkpw(plain_text_password, hashed_password)
 
 
 def SignUp():
@@ -91,7 +91,7 @@ def UpdateInfo():
     query = "SELECT UserID,FirstName,MiddleName,LastName,Institute,DOB,PrimaryMailID FROM User WHERE User.UserID = {}".format(userid)
     cur.execute(query)
     rows = cur.fetchall()
-    print('Your Current info:', json.dumps(rows[0],indent=4))
+    print('Your Current info:', rows[0])
 
     print("Enter your New details: ")
     row = {}
@@ -139,13 +139,16 @@ def UpdatePass():
     if userid == -1:
         print('Please login to update your information')
         return
-    currpass=get_hashed_password(input("Enter Password: "))
+    currpass=input("Enter Password: ")
+    print(currpass)
     query = "SELECT PasswordHash FROM User WHERE UserID={}".format(userid)
     cur.execute(query)
     rows = cur.fetchall()
-    if currpass==rows[0]['PasswordHash']:
-        newpass = get_hashed_password(input("Enter Password: "))
+
+    if check_password(currpass,rows[0]['PasswordHash']):
+        newpass = get_hashed_password(input("Enter New Password: "))
         query =" UPDATE User SET PasswordHash='{}' WHERE UserID={}".format(newpass,userid)
+        cur.execute(query)
         print("Password Updated")
     else:
         print("Incorrect Password!!")
@@ -171,7 +174,7 @@ def ViewUser():
             return
         print(rows[0])
         print("Attemped Questions")
-        query = "SELECT * FROM User, UserSolvesQuestion, Question WHERE User.UserID = UserSolvesQuestion.UserID and UserSolvesQuestion.QuestionID = Question.QuestionID and User.UserID = {}".format(targetUser)
+        query = "SELECT DISTINCT Question.QuestionID,Question.Title FROM User, UserSolvesQuestion, Question WHERE User.UserID = UserSolvesQuestion.UserID and UserSolvesQuestion.QuestionID = Question.QuestionID and User.UserID = {}".format(targetUser)
         cur.execute(query)
         rows = cur.fetchall()
         for x in rows:
@@ -179,7 +182,7 @@ def ViewUser():
         else:
             print("------------------------")
         print("Participated in contests")
-        query = "SELECT * FROM User, UserParticipatesInContest, contest WHERE User.UserID = UserParticipatesInContest.UserID and UserParticipatesInContest.ContestID = contest.ContestID and User.UserID = {}".format(targetUser)
+        query = "SELECT contest.ContestID,contest.contestname FROM User, UserParticipatesInContest, contest WHERE User.UserID = UserParticipatesInContest.UserID and UserParticipatesInContest.ContestID = contest.ContestID and User.UserID = {}".format(targetUser)
         cur.execute(query)
         rows = cur.fetchall()
         for x in rows:
@@ -187,7 +190,7 @@ def ViewUser():
         else:
             print("------------------------")
         print("Created Contests")
-        query = "SELECT * FROM User, contest WHERE User.UserID = contest.Creator and User.UserID = {}".format(targetUser)
+        query = "SELECT contest.ContestID,contest.contestname FROM User, contest WHERE User.UserID = contest.Creator and User.UserID = {}".format(targetUser)
         cur.execute(query)
         rows = cur.fetchall()
         for x in rows:
@@ -195,7 +198,7 @@ def ViewUser():
         else:
             print("------------------------")
         print("Created Questions")
-        query = "SELECT * FROM User, Question WHERE User.UserID = Question.Creator and User.UserID = {}".format(targetUser)
+        query = "SELECT Question.QuestionID, Question.Title FROM User, Question WHERE User.UserID = Question.Creator and User.UserID = {}".format(targetUser)
         cur.execute(query)
         rows = cur.fetchall()
         for x in rows:
@@ -204,7 +207,7 @@ def ViewUser():
             print("------------------------")
 
     else:
-        query = "SELECT FirstName, MiddleName, LastName, Rating, PrimaryMailID, Institute FROM User WHERE User.PrimaryMailID = {}".format(targetUser)
+        query = "SELECT FirstName, MiddleName, LastName, Rating, PrimaryMailID, Institute FROM User WHERE User.PrimaryMailID = '{}'".format(targetUser)
         cur.execute(query)
         rows = cur.fetchall()
         if not len(rows):
@@ -212,7 +215,7 @@ def ViewUser():
             return
         print(rows[0])
         print("Attemped Questions")
-        query = "SELECT * FROM User, UserSolvesQuestion, Question WHERE User.UserID = UserSolvesQuestion.UserID and UserSolvesQuestion.QuestionID = Question.QuestionID and User.PrimaryMailID = '{}'".format(targetUser)
+        query = "SELECT DISTINCT Question.QuestionID,Question.Title FROM User, UserSolvesQuestion, Question WHERE User.UserID = UserSolvesQuestion.UserID and UserSolvesQuestion.QuestionID = Question.QuestionID and User.PrimaryMailID = {}".format(targetUser)
         cur.execute(query)
         rows = cur.fetchall()
         for x in rows:
@@ -220,7 +223,7 @@ def ViewUser():
         else:
             print("------------------------")
         print("Participated in contests")
-        query = "SELECT * FROM User, UserParticipatesInContest, contest WHERE User.UserID = UserParticipatesInContest.UserID and UserParticipatesInContest.ContestID = contest.ContestID and User.PrimaryMailID = '{}'".format(targetUser)
+        query = "SELECT contest.ContestID,contest.contestname FROM User, UserParticipatesInContest, contest WHERE User.UserID = UserParticipatesInContest.UserID and UserParticipatesInContest.ContestID = contest.ContestID and User.PrimaryMailID = {}".format(targetUser)
         cur.execute(query)
         rows = cur.fetchall()
         for x in rows:
@@ -228,7 +231,7 @@ def ViewUser():
         else:
             print("------------------------")
         print("Created Contests")
-        query = "SELECT * FROM User, contest WHERE User.UserID = contest.Creator and User.PrimaryMailID = '{}'".format(targetUser)
+        query = "SELECT contest.ContestID,contest.contestname FROM User, contest WHERE User.UserID = contest.Creator and User.PrimaryMailID = {}".format(targetUser)
         cur.execute(query)
         rows = cur.fetchall()
         for x in rows:
@@ -236,7 +239,7 @@ def ViewUser():
         else:
             print("------------------------")
         print("Created Questions")
-        query = "SELECT * FROM User, Question WHERE User.UserID = Question.Creator and User.PrimaryMailID = '{}'".format(targetUser)
+        query = "SELECT Question.QuestionID, Question.Title FROM User, Question WHERE User.UserID = Question.Creator and User.PrimaryMailID = {}".format(targetUser)
         cur.execute(query)
         rows = cur.fetchall()
         for x in rows:
@@ -256,14 +259,15 @@ def ViewQuestion():
             return
         print(rows[0])
         qid = rows[0]['QuestionID']
-        query = "SELECT LanguageName FROM Language, Question WHERE Question.QuestionID = Language.QuestionID and Question.Question = {}".format(qid)
+        query = "SELECT LanguageName,Text FROM Languages, Question WHERE Question.QuestionID = Languages.QuestionID and Question.QuestionID = {}".format(qid)
         cur.execute(query)
         rows = cur.fetchall()
         languages = [ x['LanguageName'] for x in rows ]
         print('Allowed Languages: ',languages)
         try:
-            fi = open(rows[0]['text'],'r')
-            lines = fi.getlines()
+            print(rows[0]['Text'])
+            fi = open(rows[0]['Text'],'r')
+            lines = fi.readlines()
             text = "\n".join(lines)
             print(text)
         except Exception as e:
@@ -282,15 +286,15 @@ def ViewQuestion():
         for x in rows:
             print(x)
             qid = x['QuestionID']
-            query = "SELECT LanguageName FROM Language, Question WHERE Question.QuestionID = Language.QuestionID and Question.Question = {}".format(qid)
+            query = "SELECT LanguageName,Text FROM Languages, Question WHERE Question.QuestionID = Languages.QuestionID and Question.QuestionID = {}".format(qid)
             cur.execute(query)
             rows = cur.fetchall()
             languages = [ x['LanguageName'] for x in rows ]
             print('Allowed Languages: ',languages)
 
             try:
-                fi = open(x['text'],'r')
-                lines = fi.getlines()
+                fi = open(x['Text'],'r')
+                lines = fi.readlines()
                 text = "\n".join(lines)
                 print(text)
             except Exception as e:
@@ -302,7 +306,7 @@ def ViewContest():
     global cur
     targetUser = input('Enter ContestID or Name of Contest you want to view: ')
     if targetUser.isdigit():
-        query = "SELECT * FROM Contest WHERE Contest.ContestID = {}".format(targetUser)
+        query = "SELECT * FROM contest WHERE contest.ContestID = {}".format(targetUser)
         cur.execute(query)
         rows = cur.fetchall()
         if not len(rows):
@@ -316,14 +320,14 @@ def ViewContest():
         for x in rows:
             print(x)
             qid = x['QuestionID']
-            query = "SELECT LanguageName FROM Language, Question WHERE Question.QuestionID = Language.QuestionID and Question.Question = {}".format(qid)
+            query = "SELECT LanguageName, Text FROM Languages, Question WHERE Question.QuestionID = Languages.QuestionID and Question.QuestionID = {}".format(qid)
             cur.execute(query)
             rows = cur.fetchall()
             languages = [ x['LanguageName'] for x in rows ]
             print('Allowed Languages: ',languages)
             try:
-                fi = open(x['text'],'r')
-                lines = fi.getlines()
+                fi = open(x['Text'],'r')
+                lines = fi.readlines()
                 text = "\n".join(lines)
                 print(text)
             except Exception as e:
@@ -346,15 +350,15 @@ def ViewContest():
             for y in rowss:
                 print(y)
                 qid = y['QuestionID']
-                query = "SELECT LanguageName FROM Language, Question WHERE Question.QuestionID = Language.QuestionID and Question.Question = {}".format(qid)
+                query = "SELECT LanguageName, Text FROM Languages, Question WHERE Question.QuestionID = Languages.QuestionID and Question.QuestionID = {}".format(qid)
                 cur.execute(query)
                 rows = cur.fetchall()
                 languages = [ y['LanguageName'] for y in rows ]
                 print('Allowed Languages: ',languages)
 
                 try:
-                    fi = open(y['text'],'r')
-                    lines = fi.getlines()
+                    fi = open(y['Text'],'r')
+                    lines = fi.readlines()
                     text = "\n".join(lines)
                     print(text)
                 except Exception as e:
