@@ -366,60 +366,6 @@ def ViewContest():
                 finally:
                     fi.close()
 
-def DeleteUser():
-    global cur
-    global userid
-    global user
-    if userid == -1:
-        print('Please login to delete contest')
-        return
-    uid=int(input("Enter UserID you want to delete: "))
-    isadm = user['isAdmin']
-    if uid==userid or isadm == '1' :
-        query="DELETE FROM User WHERE UserID={}".format(uid)
-        if uid == userid:
-            LogOut()
-        cur.execute(query)
-    else:
-        print("You are not authorised to delete User",uid)
-
-def DeleteQuestion():
-    global cur
-    global userid
-    global user
-    if userid == -1:
-        print('Please login to delete question')
-        return
-    qid=int(input("Enter QuestionID you want to delete: "))
-    query="SELECT Creator FROM Question WHERE QuestionID={}".format(qid)
-    cur.execute(query)
-    rows = cur.fetchall()
-    qowner = rows[0]['Creator']
-    isadm = user['isAdmin']
-    if qowner==userid or isadm == '1':
-        query="DELETE FROM Question WHERE QuestionID={}".format(qid)
-    else:
-        print("You are not authorised to delete question",qid)
-
-def DeleteContest():
-    global cur
-    global userid
-    global user
-    if userid == -1:
-        print('Please login to delete contest')
-        return
-    cid=int(input("Enter ContestID you want to delete: "))
-    query="SELECT Creator FROM contest WHERE ContestID={}".format(cid)
-    cur.execute(query)
-    rows = cur.fetchall()
-    cowner = rows[0]['Creator']
-    isadm = user['isAdmin']
-    if cowner==userid or isadm == '1':
-        query="DELETE FROM contest WHERE ContestID={}".format(cid)
-        cur.execute(query)
-    else:
-        print("You are not authorised to delete contest",cid)
-
 def AddQuestion():
     global cur
     global cid
@@ -614,15 +560,12 @@ def playques(qid):
     data=cur.fetchall()
     score=0
     subtasks = [ x['SubtaskID'] for x in data]
-    print(subtasks)
     import collections
     subtasks = list(collections.Counter(subtasks).keys())
-    print(subtasks)
     testcase_groups = [ [] for x in subtasks]
     for x in data:
         pos = subtasks.index(x['SubtaskID'])
         testcase_groups[pos].append(x)
-    print('test')
     print(testcase_groups)
     #lst have all the score for 1 every subtask
     for subtask in testcase_groups:
@@ -709,6 +652,61 @@ def showResultsByUser():
     for x in rows:
         print(x)
 
+def DeleteUser():
+    global cur
+    global userid
+    global user
+    if userid == -1:
+        print('Please login to delete contest')
+        return
+    uid=int(input("Enter UserID you want to delete: "))
+    isadm = user['isAdmin']
+    if uid==userid or isadm == 1:
+        query="DELETE FROM User WHERE UserID={}".format(uid)
+        if uid == userid:
+            LogOut()
+        cur.execute(query)
+    else:
+        print("You are not authorised to delete User",uid)
+
+def DeleteQuestion():
+    global cur
+    global userid
+    global user
+    if userid == -1:
+        print('Please login to delete question')
+        return
+    qid=int(input("Enter QuestionID you want to delete: "))
+    query="SELECT Creator FROM Question WHERE QuestionID={}".format(qid)
+    cur.execute(query)
+    rows = cur.fetchall()
+    qowner = rows[0]['Creator']
+    isadm = user['isAdmin']
+    if qowner==userid or isadm == 1:
+        query="DELETE FROM Question WHERE QuestionID={}".format(qid)
+        cur.execute(query)
+    else:
+        print("You are not authorised to delete question",qid)
+
+def DeleteContest():
+    global cur
+    global userid
+    global user
+    if userid == -1:
+        print('Please login to delete contest')
+        return
+    cid=int(input("Enter ContestID you want to delete: "))
+    query="SELECT Creator FROM contest WHERE ContestID={}".format(str(cid))
+    cur.execute(query)
+    rows = cur.fetchall()
+    cowner = rows[0]['Creator']
+    isadm = user['isAdmin']
+    if cowner==userid or isadm == 1:
+        query="DELETE FROM contest WHERE ContestID={}".format(str(cid))
+        cur.execute(query)
+    else:
+        print("You are not authorised to delete contest",str(cid))
+
 def UnrateQuestion():
     global cur
     global userid
@@ -716,14 +714,15 @@ def UnrateQuestion():
     if userid == -1:
         print('Please login to delete question')
         return
-    qid=input("Enter QuestionID you want to unrate: ")
+    qid=int(input("Enter QuestionID you want to unrate: "))
     query="SELECT Creator FROM Question WHERE QuestionID={}".format(qid)
     cur.execute(query)
     rows = cur.fetchall()
     qowner = rows[0]['Creator']
     isadm = user['isAdmin']
-    if qowner==userid or isadm == '1':
-        query="UPDATE Testcases SET Score = 0 WHERE QuestionID={}".format(qid)
+    if qowner==userid or isadm == 1:
+        query="UPDATE Testcases SET Score = 0 WHERE QuestionID={}".format(str(qid))
+        cur.execute(query)
     else:
         print("You are not authorised to remove Rating for this question",qid)
 
