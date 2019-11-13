@@ -313,7 +313,7 @@ def ViewContest():
             print("Contest doesn't exists")
             return
         print(rows[0])
-        print("Questions in Contest")
+        print(color.GREEN+"Questions in Contest"+color.END)
         query = "SELECT * FROM Question WHERE Question.ContestID = {}".format(targetUser)
         cur.execute(query)
         rows = cur.fetchall()
@@ -701,7 +701,7 @@ def showResultsByQuestions():
 
 def showResultsByUser():
     uid = int(input("Enter User ID: "))
-    query = "SELECT * from Submission, Question, UserSolvesQuestion, result  WHERE User.UserID = UserSolvesQuestion.UserID and Submission.SubmissionID = UserSolvesQuestion.SubmissionID and result.SubmissionID = Submission.SubmissionID and Question.UserID = {}".format(uid)
+    query = "SELECT * from Submission, User, UserSolvesQuestion, result  WHERE User.UserID = UserSolvesQuestion.UserID and Submission.SubmissionID = UserSolvesQuestion.SubmissionID and result.SubmissionID = Submission.SubmissionID and User.UserID = {}".format(uid)
     cur.execute(query)
     rows = cur.fetchall()
     for x in rows:

@@ -88,10 +88,11 @@ CREATE TABLE `contest` (
 
 CREATE TABLE `result` (
   `TestID` int,
+  `SubtaskID` int,
   `SubmissionID` int,
   `Result` int,
   `EvaulationDate` datetime,
-  PRIMARY KEY (`TestID`, `SubmissionID`)
+  PRIMARY KEY (`TestID`, `SubmissionID`,`SubtaskID`)
 );
 
 ALTER TABLE `SecondaryEmails` ADD FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE;
@@ -119,6 +120,8 @@ ALTER TABLE UserSolvesQuestion ADD FOREIGN KEY (`SubmissionID`) REFERENCES Submi
 ALTER TABLE `contest` ADD FOREIGN KEY (`Creator`) REFERENCES `User` (`UserID`) ON DELETE CASCADE;
 
 ALTER TABLE `result` ADD FOREIGN KEY (`TestID`) REFERENCES `Testcases` (`TestID`) ON DELETE CASCADE;
+
+ALTER TABLE `result` ADD FOREIGN KEY (SubtaskID) REFERENCES `Testcases` (SubtaskID) ON DELETE CASCADE;
 
 ALTER TABLE result ADD FOREIGN KEY (`SubmissionID`) REFERENCES Submission (`SubmissionID`) ON DELETE CASCADE;
 
