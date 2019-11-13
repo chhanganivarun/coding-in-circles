@@ -335,7 +335,7 @@ def ViewContest():
             finally:
                 fi.close()
     else:
-        query = "SELECT * FROM Contest WHERE Contest.contestname = {}".format(targetUser)
+        query = "SELECT * FROM contest WHERE contest.contestname like '%{}%'".format(targetUser)
         cur.execute(query)
         rows = cur.fetchall()
         if not len(rows):
@@ -343,8 +343,8 @@ def ViewContest():
             return
         for x in rows:
             print(x)
-            print("Questions in Contest")
-            query = "SELECT * FROM Contest,Question WHERE Contest.ContestID=Question.ContestID and Contest.like = '%{}%'".format(targetUser)
+            print(color.GREEN+"Questions in Contest"+color.END)
+            query = "SELECT * FROM contest,Question WHERE contest.ContestID=Question.ContestID and contest.contestname like'%{}%'".format(targetUser)
             cur.execute(query)
             rowss = cur.fetchall()
             for y in rowss:
