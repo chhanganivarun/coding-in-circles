@@ -154,7 +154,7 @@ def UpdatePass():
         print("Incorrect Password!!")
     
 def ListQuestions():
-    query = "SELECT Question.QuestionID, Question.Title, User.UserID, User.FirstName FROM  User, Question WHERE Question.Creator = User.UserID ORDER BY Score DESC"
+    query = "SELECT Question.QuestionID, Question.Title, User.UserID, User.FirstName, Question.Score FROM  User, Question WHERE Question.Creator = User.UserID ORDER BY Score DESC"
     cur.execute(query)
     rows = cur.fetchall()
     for x in rows:
@@ -373,10 +373,12 @@ def DeleteUser():
     if userid == -1:
         print('Please login to delete contest')
         return
-    uid=input("Enter UserID you want to delete: ")
+    uid=int(input("Enter UserID you want to delete: "))
     isadm = user['isAdmin']
     if uid==userid or isadm == '1' :
         query="DELETE FROM User WHERE UserID={}".format(uid)
+        if uid == userid:
+            LogOut()
         cur.execute(query)
     else:
         print("You are not authorised to delete User",uid)
@@ -388,7 +390,7 @@ def DeleteQuestion():
     if userid == -1:
         print('Please login to delete question')
         return
-    qid=input("Enter QuestionID you want to delete: ")
+    qid=int(input("Enter QuestionID you want to delete: "))
     query="SELECT Creator FROM Question WHERE QuestionID={}".format(qid)
     cur.execute(query)
     rows = cur.fetchall()
@@ -406,7 +408,7 @@ def DeleteContest():
     if userid == -1:
         print('Please login to delete contest')
         return
-    cid=input("Enter ContestID you want to delete: ")
+    cid=int(input("Enter ContestID you want to delete: "))
     query="SELECT Creator FROM contest WHERE ContestID={}".format(cid)
     cur.execute(query)
     rows = cur.fetchall()
@@ -628,9 +630,9 @@ def playques(qid):
         for test in subtask:
             if(random.randint(0,20)>2):
                 count += 1
-                cur.execute("INSERT INTO result values ({},{},{},NOW())".format(test['TestID'],sid,1))
+                cur.execute("INSERT INTO result values ({},{},{},{},NOW())".format(test['TestID'],test['SubtaskID'],sid,1))
             else:
-                cur.execute("INSERT INTO result values ({},{},{},NOW())".format(test['TestID'],sid,0))
+                cur.execute("INSERT INTO result values ({},{},{},{},NOW())".format(test['TestID'],test['SubtaskID'],sid,0))
         if count == len(subtask) and len(subtask)>0:
             score+=subtask[0]['Score']
     

@@ -37,6 +37,7 @@ CREATE TABLE `Languages` (
 
 LOCK TABLES `Languages` WRITE;
 /*!40000 ALTER TABLE `Languages` DISABLE KEYS */;
+INSERT INTO `Languages` VALUES ('C',1),('C++',1),('C',2),('C++',2),('JAVA',2),('PYTHON',2),('C',3),('C++',3);
 /*!40000 ALTER TABLE `Languages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -59,7 +60,7 @@ CREATE TABLE `Question` (
   KEY `ContestID` (`ContestID`),
   CONSTRAINT `Question_ibfk_1` FOREIGN KEY (`Creator`) REFERENCES `User` (`UserID`) ON DELETE CASCADE,
   CONSTRAINT `Question_ibfk_2` FOREIGN KEY (`ContestID`) REFERENCES `contest` (`ContestID`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,6 +69,7 @@ CREATE TABLE `Question` (
 
 LOCK TABLES `Question` WRITE;
 /*!40000 ALTER TABLE `Question` DISABLE KEYS */;
+INSERT INTO `Question` VALUES (1,'Dantre Loves Doughnuts','questions/1_text.txt',69,5,NULL),(2,'Question Contest 1-1','questions/2_text.txt',100,5,1),(3,'Question Contest 2-1','questions/3_text.txt',100,5,1);
 /*!40000 ALTER TABLE `Question` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -108,7 +110,7 @@ CREATE TABLE `Submission` (
   `SubmissionTime` datetime DEFAULT NULL,
   `LanguageName` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`SubmissionID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -142,6 +144,7 @@ CREATE TABLE `Tags` (
 
 LOCK TABLES `Tags` WRITE;
 /*!40000 ALTER TABLE `Tags` DISABLE KEYS */;
+INSERT INTO `Tags` VALUES ('',1),('ABC',1),('DP',2),('TEST',2),('TEMP',3);
 /*!40000 ALTER TABLE `Tags` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -171,6 +174,7 @@ CREATE TABLE `Testcases` (
 
 LOCK TABLES `Testcases` WRITE;
 /*!40000 ALTER TABLE `Testcases` DISABLE KEYS */;
+INSERT INTO `Testcases` VALUES (1,'testcase/1_1_1_in.txt','testcase/1_1_1_out.txt',1,69,1),(1,'testcase/1_2_1_in.txt','testcase/1_2_1_out.txt',2,1,1),(1,'testcase/2_1_1_in.txt','testcase/2_1_1_out.txt',1,20,2),(1,'testcase/2_2_1_in.txt','testcase/2_2_1_out.txt',2,80,2),(1,'testcase/3_1_1_in.txt','testcase/3_1_1_out.txt',1,50,3),(1,'testcase/3_2_1_in.txt','testcase/3_2_1_out.txt',2,50,3),(2,'testcase/1_1_2_in.txt','testcase/1_1_2_out.txt',1,69,1),(2,'testcase/2_2_2_in.txt','testcase/2_2_2_out.txt',2,80,2);
 /*!40000 ALTER TABLE `Testcases` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,7 +201,7 @@ CREATE TABLE `User` (
   `Category` int(11) DEFAULT NULL,
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `PrimaryMailID` (`PrimaryMailID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -206,7 +210,7 @@ CREATE TABLE `User` (
 
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
-INSERT INTO `User` VALUES (1,'admin','','',1000,'2019-11-12 16:31:00','IIIT Hyd','2019-11-12 16:31:00','$2a$12$U24j/b.7hloSviayPSYSCeiTQXU.hAdxyWq9cDv50djNk9yUzqQk.',NULL,'admin@admin.com',1,1);
+INSERT INTO `User` VALUES (1,'admin','','',1000,'2019-11-12 16:31:00','IIIT Hyd','2019-11-12 16:31:00','$2a$12$U24j/b.7hloSviayPSYSCeiTQXU.hAdxyWq9cDv50djNk9yUzqQk.',NULL,'admin@admin.com',1,1),(2,'Varun','','Chhangani',0,'2019-11-12 17:49:59','IIIT Hyd','2019-11-11 00:00:00','$2a$12$Pe5.l6sK9rfu1NKAiU892eVJ4lLrPpFmK05qXanyFBrptlG01wXbG',NULL,'adsf',0,NULL),(3,'Shivaan','','',0,'2019-11-12 17:59:58','IIIT Hyd','2019-11-11 00:00:00','$2a$12$koRPC4yR5.1oCIVcf/VMPekxGvOs9HzjIFTg8QIgqQ83DsLQemkj2',NULL,'shivaan@si.com',0,NULL),(4,'Varun','','',0,'2019-11-12 18:03:20','asdf','2019-11-11 00:00:00','$2a$12$dmOu.wq8BXelU9U7r5oisuvOlZ5rbTpDIQAtAPTR5ZkBjU0ofLWsq',NULL,'varun@test.cpmo',0,NULL),(5,'shivaan','','sehgal',0,'2019-11-12 18:35:03','iiit','2000-10-10 00:00:00','$2a$12$QGV7lhcBeo0X3.ovRncFIeuHe.bo3kF4C4P8QFU/eOIMORdQ2URMi',NULL,'shivaan@gmail.com',0,NULL);
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -284,7 +288,7 @@ CREATE TABLE `contest` (
   PRIMARY KEY (`ContestID`),
   KEY `Creator` (`Creator`),
   CONSTRAINT `contest_ibfk_1` FOREIGN KEY (`Creator`) REFERENCES `User` (`UserID`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -293,6 +297,7 @@ CREATE TABLE `contest` (
 
 LOCK TABLES `contest` WRITE;
 /*!40000 ALTER TABLE `contest` DISABLE KEYS */;
+INSERT INTO `contest` VALUES (1,'Contest 1','2019-11-13 08:42:56',0,1000,'2019-11-11 23:12:12','2019-11-14 23:12:12',5);
 /*!40000 ALTER TABLE `contest` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -333,4 +338,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-12 16:31:19
+-- Dump completed on 2019-11-13  9:24:11
