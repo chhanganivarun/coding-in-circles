@@ -15,6 +15,10 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+DROP DATABASE IF EXISTS OJ;
+CREATE DATABASE OJ;
+USE OJ;
+
 --
 -- Table structure for table `Languages`
 --
@@ -110,7 +114,7 @@ CREATE TABLE `Submission` (
   `SubmissionTime` datetime DEFAULT NULL,
   `LanguageName` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`SubmissionID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -119,6 +123,7 @@ CREATE TABLE `Submission` (
 
 LOCK TABLES `Submission` WRITE;
 /*!40000 ALTER TABLE `Submission` DISABLE KEYS */;
+INSERT INTO `Submission` VALUES (2,'submissions/2_code.txt','2019-11-13 09:42:14','C'),(3,'submissions/3_code.txt','2019-11-13 09:46:34','JAVA'),(4,'submissions/4_code.txt','2019-11-13 09:47:08','C'),(5,'submissions/5_code.txt','2019-11-13 11:53:20','C++'),(6,'submissions/6_code.txt','2019-11-13 11:56:09','C');
 /*!40000 ALTER TABLE `Submission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -167,14 +172,14 @@ CREATE TABLE `Testcases` (
   CONSTRAINT `Testcases_ibfk_1` FOREIGN KEY (`QuestionID`) REFERENCES `Question` (`QuestionID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
+CREATE INDEX idx_SubtaskID on Testcases (SubtaskID);
 --
 -- Dumping data for table `Testcases`
 --
 
 LOCK TABLES `Testcases` WRITE;
 /*!40000 ALTER TABLE `Testcases` DISABLE KEYS */;
-INSERT INTO `Testcases` VALUES (1,'testcase/1_1_1_in.txt','testcase/1_1_1_out.txt',1,69,1),(1,'testcase/1_2_1_in.txt','testcase/1_2_1_out.txt',2,1,1),(1,'testcase/2_1_1_in.txt','testcase/2_1_1_out.txt',1,20,2),(1,'testcase/2_2_1_in.txt','testcase/2_2_1_out.txt',2,80,2),(1,'testcase/3_1_1_in.txt','testcase/3_1_1_out.txt',1,50,3),(1,'testcase/3_2_1_in.txt','testcase/3_2_1_out.txt',2,50,3),(2,'testcase/1_1_2_in.txt','testcase/1_1_2_out.txt',1,69,1),(2,'testcase/2_2_2_in.txt','testcase/2_2_2_out.txt',2,80,2);
+INSERT INTO `Testcases` VALUES (1,'testcase/1_1_1_in.txt','testcase/1_1_1_out.txt',1,69,1),(1,'testcase/1_2_1_in.txt','testcase/1_2_1_out.txt',2,0,1),(1,'testcase/2_1_1_in.txt','testcase/2_1_1_out.txt',1,20,2),(1,'testcase/2_2_1_in.txt','testcase/2_2_1_out.txt',2,80,2),(1,'testcase/3_1_1_in.txt','testcase/3_1_1_out.txt',1,50,3),(1,'testcase/3_2_1_in.txt','testcase/3_2_1_out.txt',2,50,3),(2,'testcase/1_1_2_in.txt','testcase/1_1_2_out.txt',1,69,1),(2,'testcase/2_2_2_in.txt','testcase/2_2_2_out.txt',2,80,2);
 /*!40000 ALTER TABLE `Testcases` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -201,7 +206,7 @@ CREATE TABLE `User` (
   `Category` int(11) DEFAULT NULL,
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `PrimaryMailID` (`PrimaryMailID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -210,7 +215,7 @@ CREATE TABLE `User` (
 
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
-INSERT INTO `User` VALUES (1,'admin','','',1000,'2019-11-12 16:31:00','IIIT Hyd','2019-11-12 16:31:00','$2a$12$U24j/b.7hloSviayPSYSCeiTQXU.hAdxyWq9cDv50djNk9yUzqQk.',NULL,'admin@admin.com',1,1),(2,'Varun','','Chhangani',0,'2019-11-12 17:49:59','IIIT Hyd','2019-11-11 00:00:00','$2a$12$Pe5.l6sK9rfu1NKAiU892eVJ4lLrPpFmK05qXanyFBrptlG01wXbG',NULL,'adsf',0,NULL),(3,'Shivaan','','',0,'2019-11-12 17:59:58','IIIT Hyd','2019-11-11 00:00:00','$2a$12$koRPC4yR5.1oCIVcf/VMPekxGvOs9HzjIFTg8QIgqQ83DsLQemkj2',NULL,'shivaan@si.com',0,NULL),(4,'Varun','','',0,'2019-11-12 18:03:20','asdf','2019-11-11 00:00:00','$2a$12$dmOu.wq8BXelU9U7r5oisuvOlZ5rbTpDIQAtAPTR5ZkBjU0ofLWsq',NULL,'varun@test.cpmo',0,NULL),(5,'shivaan','','sehgal',0,'2019-11-12 18:35:03','iiit','2000-10-10 00:00:00','$2a$12$QGV7lhcBeo0X3.ovRncFIeuHe.bo3kF4C4P8QFU/eOIMORdQ2URMi',NULL,'shivaan@gmail.com',0,NULL);
+INSERT INTO `User` VALUES (1,'admin','','',1000,'2019-11-12 16:31:00','IIIT Hyd','2019-11-12 16:31:00','$2a$12$U24j/b.7hloSviayPSYSCeiTQXU.hAdxyWq9cDv50djNk9yUzqQk.',NULL,'admin@admin.com',1,1),(2,'Varun','','Chhangani',0,'2019-11-12 17:49:59','IIIT Hyd','2019-11-11 00:00:00','$2a$12$Pe5.l6sK9rfu1NKAiU892eVJ4lLrPpFmK05qXanyFBrptlG01wXbG',NULL,'adsf',0,NULL),(3,'Shivaan','','',0,'2019-11-12 17:59:58','IIIT Hyd','2019-11-11 00:00:00','$2a$12$koRPC4yR5.1oCIVcf/VMPekxGvOs9HzjIFTg8QIgqQ83DsLQemkj2',NULL,'shivaan@si.com',0,NULL),(4,'Varun','','',0,'2019-11-12 18:03:20','asdf','2019-11-11 00:00:00','$2a$12$dmOu.wq8BXelU9U7r5oisuvOlZ5rbTpDIQAtAPTR5ZkBjU0ofLWsq',NULL,'varun@test.cpmo',0,NULL),(5,'shivaan','','sehgal',269,'2019-11-12 18:35:03','iiit','2000-10-10 00:00:00','$2a$12$QGV7lhcBeo0X3.ovRncFIeuHe.bo3kF4C4P8QFU/eOIMORdQ2URMi',NULL,'shivaan@gmail.com',0,NULL);
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -237,6 +242,7 @@ CREATE TABLE `UserParticipatesInContest` (
 
 LOCK TABLES `UserParticipatesInContest` WRITE;
 /*!40000 ALTER TABLE `UserParticipatesInContest` DISABLE KEYS */;
+INSERT INTO `UserParticipatesInContest` VALUES (5,1);
 /*!40000 ALTER TABLE `UserParticipatesInContest` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -266,6 +272,7 @@ CREATE TABLE `UserSolvesQuestion` (
 
 LOCK TABLES `UserSolvesQuestion` WRITE;
 /*!40000 ALTER TABLE `UserSolvesQuestion` DISABLE KEYS */;
+INSERT INTO `UserSolvesQuestion` VALUES (5,1,2),(5,2,5),(5,2,6);
 /*!40000 ALTER TABLE `UserSolvesQuestion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -310,12 +317,13 @@ DROP TABLE IF EXISTS `result`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `result` (
   `TestID` int(11) NOT NULL,
+  `SubtaskID` int(11) NOT NULL,
   `SubmissionID` int(11) NOT NULL,
   `Result` int(11) DEFAULT NULL,
   `EvaulationDate` datetime DEFAULT NULL,
-  PRIMARY KEY (`TestID`,`SubmissionID`),
-  KEY `SubmissionID` (`SubmissionID`),
+  PRIMARY KEY (`TestID`,`SubmissionID`,`SubtaskID`),
   CONSTRAINT `result_ibfk_1` FOREIGN KEY (`TestID`) REFERENCES `Testcases` (`TestID`) ON DELETE CASCADE,
+  CONSTRAINT `result_ibfk_3` FOREIGN KEY (`SubtaskID`) REFERENCES `Testcases` (`SubtaskID`) ON DELETE CASCADE,
   CONSTRAINT `result_ibfk_2` FOREIGN KEY (`SubmissionID`) REFERENCES `Submission` (`SubmissionID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -326,6 +334,7 @@ CREATE TABLE `result` (
 
 LOCK TABLES `result` WRITE;
 /*!40000 ALTER TABLE `result` DISABLE KEYS */;
+INSERT INTO `result` VALUES (1,1,2,1,'2019-11-13 09:42:15'),(1,2,2,1,'2019-11-13 09:42:15'),(1,1,3,1,'2019-11-13 09:46:34'),(1,2,3,1,'2019-11-13 09:46:34'),(1,1,4,0,'2019-11-13 09:47:08'),(1,2,4,1,'2019-11-13 09:47:08'),(1,1,5,1,'2019-11-13 11:53:20'),(1,2,5,1,'2019-11-13 11:53:20'),(1,1,6,1,'2019-11-13 11:56:09'),(1,2,6,1,'2019-11-13 11:56:09'),(2,1,2,1,'2019-11-13 09:42:15'),(2,2,3,1,'2019-11-13 09:46:34'),(2,2,5,1,'2019-11-13 11:53:20'),(2,2,6,1,'2019-11-13 11:56:09');
 /*!40000 ALTER TABLE `result` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -338,4 +347,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-13  9:24:11
+-- Dump completed on 2019-11-13 12:07:01

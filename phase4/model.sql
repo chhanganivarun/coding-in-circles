@@ -121,7 +121,7 @@ ALTER TABLE `contest` ADD FOREIGN KEY (`Creator`) REFERENCES `User` (`UserID`) O
 
 ALTER TABLE `result` ADD FOREIGN KEY (`TestID`) REFERENCES `Testcases` (`TestID`) ON DELETE CASCADE;
 
-ALTER TABLE `result` ADD FOREIGN KEY (SubtaskID) REFERENCES `Testcases` (SubtaskID) ON DELETE CASCADE;
+ALTER TABLE `result` ADD FOREIGN KEY (`SubtaskID`) REFERENCES `Testcases` (`SubtaskID`) ON DELETE CASCADE;
 
 ALTER TABLE result ADD FOREIGN KEY (`SubmissionID`) REFERENCES Submission (`SubmissionID`) ON DELETE CASCADE;
 
