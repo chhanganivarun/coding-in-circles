@@ -15,10 +15,6 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-DROP DATABASE IF EXISTS OJ;
-CREATE DATABASE OJ;
-USE OJ;
-
 --
 -- Table structure for table `Languages`
 --
@@ -169,10 +165,11 @@ CREATE TABLE `Testcases` (
   `QuestionID` int(11) NOT NULL,
   PRIMARY KEY (`TestID`,`QuestionID`,`SubtaskID`),
   KEY `QuestionID` (`QuestionID`),
+  KEY `SubtaskID` (`SubtaskID`),
   CONSTRAINT `Testcases_ibfk_1` FOREIGN KEY (`QuestionID`) REFERENCES `Question` (`QuestionID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-CREATE INDEX idx_SubtaskID on Testcases (SubtaskID);
+
 --
 -- Dumping data for table `Testcases`
 --
@@ -322,9 +319,11 @@ CREATE TABLE `result` (
   `Result` int(11) DEFAULT NULL,
   `EvaulationDate` datetime DEFAULT NULL,
   PRIMARY KEY (`TestID`,`SubmissionID`,`SubtaskID`),
+  KEY `result_ibfk_3` (`SubtaskID`),
+  KEY `result_ibfk_2` (`SubmissionID`),
   CONSTRAINT `result_ibfk_1` FOREIGN KEY (`TestID`) REFERENCES `Testcases` (`TestID`) ON DELETE CASCADE,
-  CONSTRAINT `result_ibfk_3` FOREIGN KEY (`SubtaskID`) REFERENCES `Testcases` (`SubtaskID`) ON DELETE CASCADE,
-  CONSTRAINT `result_ibfk_2` FOREIGN KEY (`SubmissionID`) REFERENCES `Submission` (`SubmissionID`) ON DELETE CASCADE
+  CONSTRAINT `result_ibfk_2` FOREIGN KEY (`SubmissionID`) REFERENCES `Submission` (`SubmissionID`) ON DELETE CASCADE,
+  CONSTRAINT `result_ibfk_3` FOREIGN KEY (`SubtaskID`) REFERENCES `Testcases` (`SubtaskID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -347,4 +346,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-13 12:07:01
+-- Dump completed on 2019-11-14 12:10:54
